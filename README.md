@@ -1,42 +1,86 @@
-# Emotion-Detection-Challenge-on-Twitter
-## Description
-This project was carried out for the hackathon dedicated to the Milan Digital Week by Open Data Playground. The sentiment analysis task involves a multiclass classification of 4 emotions:
-1.   😠 **Anger**     (class 0)
-2.   😂 **Joy**       (class 1)
-3.   😀 **Optimism** (class 2)
-4.   😞 **Sadness**   (class 3)
-A dataset containing raw textual files of tweets collected from Twitter was provided.
+# Twitter Emotion Detection via Ensemble Learning 🎭
 
-My approach was to use a voting classifier. The project is based on several stages, including text preprocessing, tokenization, and merging the results of various machine learning models. In the end, the system produces a final prediction saved in a CSV file.
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![NLP](https://img.shields.io/badge/Task-NLP%20Classification-orange)
+![Sklearn](https://img.shields.io/badge/Library-Scikit--Learn-yellow)
+![Status](https://img.shields.io/badge/Status-Completed-success)
 
-## Key Features
-1) **Data analysis:** Histograms to understand the distribution of words based on emotions.
-2) **Data preprocessing:** Stopword removal, text normalization, lemmatization.
-3) **Data augmentation:** Applied a data augmentation technique by creating new text using synonyms of words (removed due to worse performance).
-4) **Embedding:** Tested embedding with TF-IDF, Word2Vec, and pre-trained BART (best performance with TF-IDF).
-5) **Integration of multiple models:** Combines predictions from different models.
-6) **Voting system:** Determines the final prediction based on the mode of labels predicted by individual classifiers.
+## 📋 Project Overview
+
+Questo progetto affronta una sfida di **Natural Language Processing (NLP)**: classificare l'emozione dominante in una serie di Tweet. A differenza della classica *Sentiment Analysis* binaria (positivo/negativo), questo modello distingue tra quattro classi emotive specifiche:
+1. **Anger** (Rabbia) 😠
+2. **Joy** (Gioia) 😂
+3. **Optimism** (Ottimismo) 😀
+4. **Sadness** (Tristezza) 😞
+
+L'obiettivo è stato massimizzare l'accuratezza predittiva combinando le forze di molteplici algoritmi di Machine Learning attraverso una strategia di **Hard Voting Ensemble**.
+
+## 🚀 Pipeline di Elaborazione
+
+### 1. Text Preprocessing & Cleaning
+Il testo dei tweet è stato pulito e normalizzato per ridurre il rumore:
+* Rimozione di handle (@user), hashtag, URL e caratteri speciali.
+* Rimozione delle **Stopwords** inglesi.
+* **Lemmatizzazione** e Stemming per ridurre le parole alla loro radice (utilizzando NLTK).
 
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-## Descrizione
-Progetto svolto per l'hackaton dedicato alla Milano Digital Week da parte di Open Data Playground. [Secondo posto su 10 team]
-Il task di sentiment analysis consiste in una classificazione multiclasse di 4 sentimenti:
 
-1.   😠 **Anger**     (class 0)
-2.   😂 **Joy**       (class 1)
-3.   😀 **Optimism** (class 2)
-4.   😞 **Sadness**   (class 3)
+### 2. Feature Extraction (TF-IDF)
+Conversione del testo in vettori numerici utilizzando **TF-IDF (Term Frequency-Inverse Document Frequency)**.
+* Sono stati considerati unigrammi e bigrammi (`ngram_range=(1, 2)`) per catturare il contesto locale delle parole.
 
-A disposizione è stato fornito un dataset contenente i file testuali grezzi dei tweet raccolti da Tweeter.
+### 3. Modellazione & Ensemble
+Sono stati addestrati e validati 10 algoritmi diversi per garantire diversità nella predizione:
 
-Il mio approccio è stato quello di utilizzare il voting classify. 
-Il progetto si basa su diverse fasi, tra cui pre-elaborazione del testo, tokenizzazione, e fusione dei risultati dei modelli di machine learning. Alla fine, il sistema produce una previsione finale salvata in un file CSV.
+* **Linear Models**: Logistic Regression, Passive Aggressive Classifier.
+* **Probabilistic**: Multinomial Naive Bayes.
+* **Support Vector Machines**: SVM (Linear SVC).
+* **Tree-Based & Boosting**: Random Forest, Extra Trees, **XGBoost**, **LightGBM**, AdaBoost.
+* **Neural Networks**: MLP Classifier (Multi-Layer Perceptron).
 
-## Funzionalità principali
-1) Analisi dei dati: Istogrammi per capire la distribuzione delle parole in base alle emozioni
-2) Data pre-processing: Rimozione Stopword, normalizzazione del testo, lemmatizzazione
-3) Data agumentation: Usata una tecnica di data agumentation creando nuovo testo sfruttando sinonimi delle parole (rimosso per performance peggiori)
-1) Embedding: Testato l'embedding con TFIDF, Word2Vec e Bart pre addestrato. (Performance migliori con TFIDF)
-2) Integrazione di più modelli: combina le previsioni di diversi modelli
-3) Sistema di votazione: determina la previsione finale basata sulla modalità delle etichette predette dai singoli classificatori
+
+
+### 4. Voting Strategy
+Le predizioni di tutti i modelli sono state aggregate utilizzando un **Hard Voting System** (Majority Rule). La classe finale è determinata dalla moda delle predizioni dei singoli classificatori, riducendo la varianza e migliorando la robustezza rispetto ai singoli modelli.
+
+## 🛠️ Tecnologie Utilizzate
+
+* **Linguaggio**: Python
+* **NLP**: NLTK (WordNetLemmatizer, Stopwords), Re (Regex)
+* **ML Libraries**: Scikit-learn, XGBoost, LightGBM
+* **Data Manipulation**: Pandas, NumPy
+
+## 📊 Risultati
+
+La strategia di Ensemble ha permesso di superare le performance dei singoli classificatori deboli.
+* Il modello finale combina le "opinioni" di 10 diversi classificatori.
+* La matrice di confusione mostra una buona capacità di distinzione anche tra classi semanticamente vicine (es. Joy vs Optimism).
+
+## 💻 Come Eseguire il Codice
+
+1.  **Clona la repository**:
+    ```bash
+    git clone [https://github.com/tuo-username/emotion-detection-nlp.git](https://github.com/tuo-username/emotion-detection-nlp.git)
+    ```
+
+2.  **Installa le dipendenze**:
+    ```bash
+    pip install pandas numpy scikit-learn xgboost lightgbm nltk
+    ```
+
+3.  **Setup NLTK**:
+    Assicurati di scaricare le risorse necessarie:
+    ```python
+    import nltk
+    nltk.download('stopwords')
+    nltk.download('wordnet')
+    ```
+
+4.  **Esegui il Notebook**:
+    Lancia il file `Emotional_Detection_Voting.ipynb` per riprodurre il training e la generazione del file `merged_labels.csv`.
+
+## 👨‍💻 Autore
+
+**[Tuo Nome]**
+* Master Student in Computer Science
+* [LinkedIn](https://linkedin.com/in/tuo-profilo) | [GitHub](https://github.com/tuo-username)
